@@ -2,6 +2,16 @@
 
 
 // CAdmin 对话框
+struct MyAdmData
+{
+	TCHAR sName[16];
+	TCHAR sCode[16];
+	int nPrior;
+//	CString m_tm;
+	
+
+};
+
 
 class CAdmin : public CDialogEx
 {
@@ -28,4 +38,8 @@ public:
 	afx_msg BOOL Check(LPCTSTR mStr);
 	afx_msg void OnDestroy();
 	CListCtrl* pList;
+
+	CComboBox m_cbComBox;
+	void SaveData();
+	void LoadFile();
 };

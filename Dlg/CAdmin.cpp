@@ -25,6 +25,7 @@ CAdmin::~CAdmin()
 void CAdmin::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_COMBO1, m_cbComBox);
 }
 
 
@@ -62,11 +63,12 @@ void CAdmin::OnBnClickedAdd()
 	CString str,str1,str2,str3;
 	GetDlgItemText(IDC_EDIT1, str);
 	GetDlgItemText(IDC_EDIT2, str1);  //从密码的输入框获取
-	GetDlgItemText(IDC_EDIT3, str2);  //从密码的输入框获取
+	
+	int nIndex = m_cbComBox.GetCurSel();
+	m_cbComBox.GetLBText(nIndex, str2);
 	CTime time;
 	time = CTime::GetCurrentTime();
 	str3 = time.Format("%Y-%m-%d %A %H:%M:%S");
-
 
 	if (Check(str))  //已经存在！
 	{
@@ -99,12 +101,58 @@ void CAdmin::OnBnClickedModify()
 }
 
 
+void CAdmin::LoadFile()
+{
+	// TODO: 在此处添加实现代码.
+	CFile f;
+	if (!f.Open(L"UserSettingSave.dat", CFile::modeRead))
+	{
+		AfxMessageBox(L"UserSettingSave.dat文件不存在!");
+		return;
+	}
+	MyAdmData a;
+	int i = 0;
+
+	while (f.Read(&a, sizeof(a)) == sizeof(a))
+	{
+		//pList->InsertItem(
+		//	LVIF_TEXT | LVIF_STATE, i, a.sName,
+		//	(i % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED,
+		//	0, 0);
+		pList->InsertItem(i, a.sName);
+
+		pList->SetItemText(i, 1, a.sCode);  //从密码的输入框获取
+		pList->SetItemText(i, 2, a.nPrior?L"普通":L"高级");  //从密码的输入框获取
+	//	pList->SetItemText(i, 3, a.m_tm);
+
+	}
+}
+
+
 BOOL CAdmin::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
 	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBO1);
-	//pCombo->AddString(L"普通?? 管理员");    //如果在控件里面没有给定选项，那么这里通过该方式给
+	 //如果在控件里面没有给定选项，那么这里通过该方式给
+	/*
+有两种方式，第一种我把它成为盲插，为什么呢？因为它不指定行进行插入，利用函数AddString,
+m_cbcombox.AddString(_T("北京"));
+m_cbcombox.AddString(_T("上海"));
+m_cbcombox.AddString(_T("广州"));
+这种一般不能按照自己意愿顺序先后插入，可能顺序是错乱的。需要在其属性sort中，修改为false。
+第二种我要告诉大家的是可以按照行号进行插入，它所用的的API是InsertString,
+m_cbcombox.InsertString(0 ,_T("北京") );
+m_cbcombox.InsertString(1 ,_T("上海") );
+m_cbcombox.InsertString(2 ,_T("广州") );
+————————————————
+版权声明：本文为CSDN博主「裂风龙隼」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/leiyang2014/article/details/53980555
+	*/
+	pCombo->InsertString(0, _T("普通"));
+	pCombo->InsertString(1, _T("高级"));
+	pCombo->InsertString(3, _T("超级"));
+
 	//在ComBox属性选项的Data里面输入 普通;管理员  
 	pCombo->SetCurSel(0);  //给下拉复选框设置默认选择项
 
@@ -115,10 +163,9 @@ BOOL CAdmin::OnInitDialog()
 	pList->InsertColumn(3, L"权限", LVCFMT_LEFT, 120);
 	pList->InsertColumn(4, L"修改日期", LVCFMT_LEFT, 200);
 
-	//failed
-	//pList->SetItemText(1, 1, L"StrNameIs"); //将StrNameIs放到插入列的第二行编号是1
-	//pList->SetItemText(1, 2, L"StrCodeIs"); //将StrNameIs放到插入列的第二行编号是1
-
+	//////////////////////////////////////////////////////////
+	LoadFile();
+	   
 	// TODO:  在此添加额外的初始化
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -140,8 +187,49 @@ BOOL SetItemText(int nItem,int nSubItem,LPCTSTR lpszText);
 void CAdmin::OnDestroy()
 {
 	CDialogEx::OnDestroy();
+	int nRet = AfxMessageBox(L"是否将改到保存到文件？", MB_YESNOCANCEL);
+	if ( nRet==IDYES)
+	{
+		SaveData();
+	}
+	else
+		return;
 
-	// TODO: 在此处添加消息处理程序代码
 
 	 
 }
+
+
+void CAdmin::SaveData()
+{
+	// TODO: 在此处添加实现代码.
+	MyAdmData a;
+	CFile f;
+	if (! f.Open(L"UserSettingSave.dat", CFile::modeCreate | CFile::modeReadWrite))
+	{
+		AfxMessageBox(L"保存文件失败！！");
+		return;
+	}
+	int i = 0, nCount = pList->GetItemCount();
+	while (i < nCount)
+	{
+		pList->GetItemText(i, 0, a.sName,_countof(a.sName));
+		pList->GetItemText(i, 1, a.sCode,_countof(a.sCode));
+		if (pList->GetItemText(i, 2) == L"普通")
+		{
+			a.nPrior = 1;
+		}
+		else if (pList->GetItemText(i, 2) == L"高级")
+		{
+			a.nPrior = 0;
+		}
+		f.Write(&a, sizeof(a));  //结构体
+		// _countof 只对数组有效
+
+		i++;
+
+	}
+
+	f.Close();
+}
+
