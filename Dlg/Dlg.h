@@ -19,7 +19,13 @@ class CDlgApp : public CWinApp
 {
 public:
 	CDlgApp();
+	///////////////////////////////////////////////
+	/*
+		放到这里，然后，通过 theApp.a来引用
+	*/
+	MyAdmData a;
 
+	///////////////////////////////////////////////
 // 重写
 public:
 	virtual BOOL InitInstance();
@@ -27,6 +33,8 @@ public:
 // 实现
 
 	DECLARE_MESSAGE_MAP()
+	int tryTimes;
+
 };
 
 extern CDlgApp theApp;

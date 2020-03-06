@@ -43,10 +43,14 @@ END_MESSAGE_MAP()
 void CMainDlg::OnBnClickedLogin()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	CString str;
-	GetDlgItemText(IDC_NUM, str);
 
-	EndDialog(IDC_Login);
+	////局部对象的变量不能修改全局变量
+	//CLogin dlg;
+	//dlg.CkeckPasswd = FALSE;
+	
+	//lg.CkeckPasswd = FALSE;
+
+	EndDialog(IDC_Login);  //
 }
 
 
@@ -56,7 +60,6 @@ void CMainDlg::OnBnClickedinformanager()
 
 
 	EndDialog(IDC_inforManager);
-
 }
 
 
@@ -66,8 +69,35 @@ void CMainDlg::OnBnClickedAdmin()
 
 
 	EndDialog(IDC_ADMIN);
-
 }
 
 
 
+
+
+BOOL CMainDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// TODO:  在此添加额外的初始化
+
+
+	//根据保存到全局区的内容 给出窗口标题
+	CString str = L"控制面板 - ";
+	str += theApp.a.sName;
+	str += L" ( ";
+	str += theApp.a.nPrior ? L"普通":L"高级";
+	str += L" )";
+	SetWindowText(str);
+	// 在这里判断，用户是普通的还是一般的，如果是一般的主对话框里面的按钮disable
+	if (theApp.a.nPrior) //为普通用户
+	{
+		GetDlgItem(IDC_inforManager)->DestroyWindow(); //使该按钮不能使用
+	//	GetDlgItem(IDC_ADMIN)->DestroyWindow(); //使该按钮不能使用
+	}
+
+
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // 异常: OCX 属性页应返回 FALSE
+}

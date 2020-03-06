@@ -24,4 +24,6 @@ public:
 	afx_msg void OnBnClickedLogin();
 	afx_msg void OnBnClickedinformanager();
 	afx_msg void OnBnClickedAdmin();
+	//CLogin lg;
+	virtual BOOL OnInitDialog();
 };

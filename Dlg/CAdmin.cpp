@@ -79,25 +79,67 @@ void CAdmin::OnBnClickedAdd()
 	//CListCtrl *pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
 	int nRawCount = pList->GetItemCount(); //获取该控件里面有多少行文字,第0行是编号0
 	int nColumnCount = pList->GetHeaderCtrl()->GetItemCount();
-	int i = 0;
 	pList->InsertItem(
-				LVIF_TEXT | LVIF_STATE, i, str,
-				(i % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED,
+				LVIF_TEXT | LVIF_STATE, 0, str,
+				LVIS_SELECTED, LVIS_SELECTED,
 				0, 0);
-	pList->SetItemText(0,1,str1);  //从密码的输入框获取
-	pList->SetItemText(0,2, str2);  //从密码的输入框获取
-	pList->SetItemText(0, 3, str3);
+	pList->SetItemText(0,1,L"");  //从 
+	pList->SetItemText(0,2,str1);  //从密码的输入框获取
+	pList->SetItemText(0,3, str2);   
+	pList->SetItemText(0,4, L"");
+	pList->SetItemText(0,5, str3);
+
+	m_bModify = true;
 }
 
 void CAdmin::OnBnClickeddel()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	AfxMessageBox(L"您确认要删除吗？？");
+	if (AfxMessageBox(L"您确认要删除吗？？", MB_YESNOCANCEL) == IDYES)
+	{
+		POSITION pos = pList->GetFirstSelectedItemPosition();
+		if (!pos)
+		{
+			AfxMessageBox(L"请选择一个账号");
+			return;
+		}
+		int nItem = pList->GetNextSelectedItem(pos);
+	//	CString str = pList->GetItemText(nItem, 2);
+		if (!pList->GetItemText(nItem, 2).CompareNoCase(L"高级"))
+		{
+			AfxMessageBox(L"管理员账号不可删除！");
+			return;
+		}
+		if (AfxMessageBox(L"最后的删除警告,确认删除用户 " + pList->GetItemText(nItem, 0) + L" 吗？", MB_YESNOCANCEL) == IDYES)
+		{
+			m_bModify = TRUE;
+			pList->DeleteItem(nItem);
+		}
+		return;
+	}
 }
 
 void CAdmin::OnBnClickedModify()
 {
-	// TODO: 在此添加控件通知处理程序代码
+	// 只修改密码和权限，不能修改用户名
+	// 即，普通用户不能只能修改密码；高级用户可以修改密码和其他用户的权限
+#if 0
+	//屏蔽是因为，实现上还有欠缺
+	//1，方法1，通过点击CListCtrl里面的用户名，然后将其获取到CEdit控件，该知识欠缺，最后点击修改按钮修改
+	//2，方法2，点击修改按钮将CListCtrl里面的东西获取到弹出一个框里面，然后在这个里面修改，该知识欠缺
+
+	m_bModify = true;
+#endif
+
+	/*
+		先读取内容，然后在新的对话框里面修改
+		而由于内容已经是全局的，故在新的对话框里面读取，然后进行修改
+		注意：需要重新设置对话框的标题！！！！
+	*/
+
+	// 详细信息添加按钮==》信息录入界面
+	CDataInput dlg;
+	dlg.DoModal();
 }
 
 
@@ -105,25 +147,25 @@ void CAdmin::LoadFile()
 {
 	// TODO: 在此处添加实现代码.
 	CFile f;
-	if (!f.Open(L"UserSettingSave.dat", CFile::modeRead))
+	if (!f.Open(L"MyAdmData.dat", CFile::modeRead))
 	{
 		AfxMessageBox(L"UserSettingSave.dat文件不存在!");
 		return;
 	}
-	MyAdmData a;
+	//MyAdmData a;
 	int i = 0;
 
-	while (f.Read(&a, sizeof(a)) == sizeof(a))
+	while (f.Read(&theApp.a, sizeof(theApp.a)) == sizeof(theApp.a))
 	{
 		//pList->InsertItem(
 		//	LVIF_TEXT | LVIF_STATE, i, a.sName,
 		//	(i % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED,
 		//	0, 0);
-		pList->InsertItem(i, a.sName);
+		pList->InsertItem(i, theApp.a.sName);
 
-		pList->SetItemText(i, 1, a.sCode);  //从密码的输入框获取
-		pList->SetItemText(i, 2, a.nPrior?L"普通":L"高级");  //从密码的输入框获取
-	//	pList->SetItemText(i, 3, a.m_tm);
+		pList->SetItemText(i, 1, theApp.a.sCode);  //从密码的输入框获取
+		pList->SetItemText(i, 2, theApp.a.nPrior?L"普通":L"高级");  //从密码的输入框获取
+		pList->SetItemText(i, 3, theApp.a.m_tm);
 
 	}
 }
@@ -132,6 +174,14 @@ void CAdmin::LoadFile()
 BOOL CAdmin::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+
+	//根据保存到全局区的内容 给出窗口标题
+	CString str = L"管理员信息设置界面 - ";
+	str += theApp.a.sName;
+	str += L" ( ";
+	str += theApp.a.nPrior ? L"普通" : L"高级";
+	str += L" )";
+	SetWindowText(str);
 
 	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBO1);
 	 //如果在控件里面没有给定选项，那么这里通过该方式给
@@ -151,22 +201,32 @@ m_cbcombox.InsertString(2 ,_T("广州") );
 	*/
 	pCombo->InsertString(0, _T("普通"));
 	pCombo->InsertString(1, _T("高级"));
-	pCombo->InsertString(3, _T("超级"));
+//	pCombo->InsertString(3, _T("超级"));
 
 	//在ComBox属性选项的Data里面输入 普通;管理员  
 	pCombo->SetCurSel(0);  //给下拉复选框设置默认选择项
 
 	//CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
 	pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
-	pList->InsertColumn(1, L"账户", LVCFMT_LEFT, 120,0);
-	pList->InsertColumn(2, L"密码", LVCFMT_LEFT, 160);
-	pList->InsertColumn(3, L"权限", LVCFMT_LEFT, 120);
-	pList->InsertColumn(4, L"修改日期", LVCFMT_LEFT, 200);
+	pList->InsertColumn(1, L"账户", LVCFMT_CENTER, 120,0);
+	pList->InsertColumn(1, L"工号", LVCFMT_CENTER, 120,0);
+	pList->InsertColumn(2, L"密码", LVCFMT_CENTER, 160);
+	pList->InsertColumn(3, L"权限", LVCFMT_CENTER, 120);
+	pList->InsertColumn(4, L"入职时间", LVCFMT_CENTER, 200);
+	pList->InsertColumn(4, L"工资", LVCFMT_CENTER, 90);
 
 	//////////////////////////////////////////////////////////
 	LoadFile();
 	   
 	// TODO:  在此添加额外的初始化
+
+	/////////////////////////////////////////////////////////////////
+	if (theApp.a.nPrior) //为普通用户
+	{
+		GetDlgItem(IDC_Add)->DestroyWindow(); //使该按钮不能使用
+		GetDlgItem(IDC_del)->DestroyWindow(); //使该按钮不能使用
+		GetDlgItem(IDC_COMBO1)->DestroyWindow(); //使该按钮不能使用	}
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -186,15 +246,19 @@ BOOL SetItemText(int nItem,int nSubItem,LPCTSTR lpszText);
 
 void CAdmin::OnDestroy()
 {
-	CDialogEx::OnDestroy();
-	int nRet = AfxMessageBox(L"是否将改到保存到文件？", MB_YESNOCANCEL);
-	if ( nRet==IDYES)
-	{
-		SaveData();
-	}
-	else
-		return;
 
+	if (m_bModify)
+	{
+		int nRet = AfxMessageBox(L"是否将改到保存到文件？", MB_YESNOCANCEL);
+		if ( nRet==IDYES)
+		{
+			SaveData();
+		}
+		else
+			return;
+	}
+
+	CDialogEx::OnDestroy();
 
 	 
 }
@@ -203,9 +267,9 @@ void CAdmin::OnDestroy()
 void CAdmin::SaveData()
 {
 	// TODO: 在此处添加实现代码.
-	MyAdmData a;
+	//MyAdmData a;
 	CFile f;
-	if (! f.Open(L"UserSettingSave.dat", CFile::modeCreate | CFile::modeReadWrite))
+	if (! f.Open(L"MyAdmData.dat", CFile::modeCreate | CFile::modeReadWrite))
 	{
 		AfxMessageBox(L"保存文件失败！！");
 		return;
@@ -213,17 +277,19 @@ void CAdmin::SaveData()
 	int i = 0, nCount = pList->GetItemCount();
 	while (i < nCount)
 	{
-		pList->GetItemText(i, 0, a.sName,_countof(a.sName));
-		pList->GetItemText(i, 1, a.sCode,_countof(a.sCode));
+		pList->GetItemText(i, 0, theApp.a.sName,_countof(theApp.a.sName));
+		pList->GetItemText(i, 1, theApp.a.sCode,_countof(theApp.a.sCode));
 		if (pList->GetItemText(i, 2) == L"普通")
 		{
-			a.nPrior = 1;
+			theApp.a.nPrior = 1;
 		}
 		else if (pList->GetItemText(i, 2) == L"高级")
 		{
-			a.nPrior = 0;
+			theApp.a.nPrior = 0;
 		}
-		f.Write(&a, sizeof(a));  //结构体
+		pList->GetItemText(i, 3, theApp.a.m_tm, _countof(theApp.a.m_tm));
+
+		f.Write(&theApp.a, sizeof(theApp.a));  //结构体
 		// _countof 只对数组有效
 
 		i++;

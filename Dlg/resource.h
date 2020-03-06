@@ -15,12 +15,15 @@
 #define IDC_NAME                        1002
 #define IDC_ADMIN                       1002
 #define IDC_Salary                      1003
+#define IDC_LoginPrior                  1003
 #define IDC_Salary2                     1004
-//#define IDC_LIST                        1008
+#define IDC_EDIT1                       1004
+#define IDC_JoinTime                    1004
+#define IDC_LoginCode                   1005
+#define IDC_SalaryIn                    1006
 #define IDC_ListMng                     1008
 #define IDC_Login                       1009
 #define IDC_inforManager                1010
-#define IDC_EDIT1                       1004
 #define IDC_EDIT2                       1011
 #define IDC_EDIT3                       1012
 #define IDC_GetInfor                    1013
@@ -28,6 +31,7 @@
 #define IDC_Add                         1015
 #define IDC_Modify                      1016
 #define IDC_ListInfor                   1017
+#define IDC_Pass                        1018
 
 // Next default values for new objects
 // 
@@ -35,7 +39,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1018
+#define _APS_NEXT_CONTROL_VALUE         1019
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

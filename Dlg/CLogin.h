@@ -22,4 +22,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedOk();
+	virtual void OnCancel();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	virtual void OnOK();
+	bool LoginJudge(const CString& szNum, const CString& szName, const CString& szCode);
+	bool CkeckPasswd;
+
 };

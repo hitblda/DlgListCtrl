@@ -26,4 +26,8 @@ public:
 	afx_msg void OnAdminClk();
 	afx_msg void OnBnClickedGetinfor();
 
+	virtual BOOL OnInitDialog();
+	CListCtrl* pList;
+	afx_msg void OnBnClickeddel();
+	afx_msg void OnBnClickedModify();
 };
