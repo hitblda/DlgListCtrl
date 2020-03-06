@@ -27,9 +27,7 @@ END_MESSAGE_MAP()
 
 CDlgApp::CDlgApp()
 {
-	tryTimes = 0;
-	//MyAdmData a;
-	//CLogin lg;
+	
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
 }
@@ -44,7 +42,7 @@ CDlgApp theApp;
 BOOL CDlgApp::InitInstance()
 {
 	CWinApp::InitInstance();
-	
+	tryTimes = 0;
 	CLogin lg;
 
 	while( (tryTimes <3)&&(lg.CkeckPasswd == FALSE))
@@ -83,14 +81,14 @@ BOOL CDlgApp::InitInstance()
 		else if (idNum == IDC_Login)
 		{
 			CLogin dlg2;
-			dlg2.DoModal();
-
+			/*dlg2.DoModal();*/
+			if (dlg2.DoModal() == IDCANCEL)
+				return FALSE; //退出
 		}
 		else if (idNum == IDC_inforManager)
 		{
 			CInforMng dlg3;
 			dlg3.DoModal();
-
 		}
 	}
 

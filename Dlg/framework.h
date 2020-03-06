@@ -30,7 +30,7 @@
 struct MyAdmData
 {
 	TCHAR sName[16];
-	TCHAR sNum[6];
+	TCHAR sNum[7]; //
 	TCHAR sCode[16];
 	int nPrior;  //高级为0，普通为1
 	TCHAR m_tm[30];

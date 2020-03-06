@@ -225,7 +225,10 @@ m_cbcombox.InsertString(2 ,_T("广州") );
 	{
 		GetDlgItem(IDC_Add)->DestroyWindow(); //使该按钮不能使用
 		GetDlgItem(IDC_del)->DestroyWindow(); //使该按钮不能使用
-		GetDlgItem(IDC_COMBO1)->DestroyWindow(); //使该按钮不能使用	}
+		GetDlgItem(IDC_COMBO1)->DestroyWindow(); //使该按钮不能使用	
+		GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_STATIC4)->ShowWindow(SW_HIDE); //使该静态文本不能使用	
+
 	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control

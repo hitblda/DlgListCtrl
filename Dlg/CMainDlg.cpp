@@ -44,12 +44,6 @@ void CMainDlg::OnBnClickedLogin()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
-	////局部对象的变量不能修改全局变量
-	//CLogin dlg;
-	//dlg.CkeckPasswd = FALSE;
-	
-	//lg.CkeckPasswd = FALSE;
-
 	EndDialog(IDC_Login);  //
 }
 
@@ -93,7 +87,8 @@ BOOL CMainDlg::OnInitDialog()
 	if (theApp.a.nPrior) //为普通用户
 	{
 		GetDlgItem(IDC_inforManager)->DestroyWindow(); //使该按钮不能使用
-	//	GetDlgItem(IDC_ADMIN)->DestroyWindow(); //使该按钮不能使用
+		//ShowWIndoe()
+		//EnableWindow()
 	}
 
 
