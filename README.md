@@ -1,0 +1,4 @@
+# DlgListCtrl
+基于对话框的人员管理系统
+已经实现了Edit控件数据读取到 CListCtrl上面显示，然后采用文件保存为dat格式，
+重启之后能够复现CListCtrl里面的内容
