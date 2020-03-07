@@ -27,17 +27,27 @@
 #include <afxcontrolbars.h>     // MFC 支持功能区和控制条
 
 
+//CListCtrl mList;   //然后在本类的InitDialog里面用 mList.attach();
+
+//struct MyAdmData
+//{
+//	TCHAR sName[16];
+//	TCHAR sNum[7]; //
+//	TCHAR sCode[16];
+//	int nPrior;  //高级为0，普通为1
+//	TCHAR m_tm[30];
+//	TCHAR Salary[6];
+//};
+
 struct MyAdmData
 {
-	TCHAR sName[16];
-	TCHAR sNum[7]; //
+	TCHAR sName[32];
+	int sNum; //
 	TCHAR sCode[16];
 	int nPrior;  //高级为0，普通为1
-	TCHAR m_tm[30];
+	TCHAR m_tm[60];
 	int Salary;
 };
-
-
 
 
 

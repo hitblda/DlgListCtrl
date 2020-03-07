@@ -24,6 +24,7 @@ public:
 		放到这里，然后，通过 theApp.a来引用
 	*/
 	MyAdmData a;
+	
 
 	///////////////////////////////////////////////
 // 重写
@@ -34,6 +35,8 @@ public:
 
 	DECLARE_MESSAGE_MAP()
 	int tryTimes;
+	//bool m_bModify;
+
 
 };
 

@@ -40,6 +40,8 @@ BOOL CDlgDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	//HWND hWnd = ::GetDlgItem(m_hWnd,IDC_ListInfor);
+
 	// 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标

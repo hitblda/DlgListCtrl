@@ -2,15 +2,7 @@
 
 
 // CAdmin 对话框
-//struct MyAdmData
-//{
-//	TCHAR sName[16];
-//	TCHAR sNum[6];
-//	TCHAR sCode[16];
-//	int nPrior;
-//	TCHAR m_tm[30];
-//	int Salary;
-//};
+
 
 
 class CAdmin : public CDialogEx
@@ -18,6 +10,7 @@ class CAdmin : public CDialogEx
 	DECLARE_DYNAMIC(CAdmin)
 
 public:
+	bool m_bModifyA;
 	CAdmin(CWnd* pParent = nullptr);   // 标准构造函数
 	virtual ~CAdmin();
 
@@ -36,11 +29,13 @@ public:
 	afx_msg void OnBnClickedModify();
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL Check(LPCTSTR mStr);
-	afx_msg void OnDestroy();
-	CListCtrl* pList;
+//	afx_msg void OnDestroy();
+	//CListCtrl* pList;
+	CListCtrl  mAdminList;
 
 	CComboBox m_cbComBox;
 	void SaveData();
 	void LoadFile();
-	BOOL m_bModify;
+	virtual void OnCancel();
+	afx_msg void OnDestroy();
 };

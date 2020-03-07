@@ -11,14 +11,14 @@
 #define IDD_Entrance                    133
 #define IDC_Input                       1000
 #define IDC_NUM                         1001
-#define IDC_del                         1001
-#define IDC_NAME                        1002
+#define IDC_del                         1021
+#define IDC_NAME                        1022
 #define IDC_ADMIN                       1002
 #define IDC_Salary                      1003
-#define IDC_LoginPrior                  1003
+#define IDC_LoginPrior                  1023
 #define IDC_Salary2                     1004
-#define IDC_EDIT1                       1004
-#define IDC_JoinTime                    1004
+#define IDC_EDIT1                       1024
+#define IDC_JoinTime                    1025
 #define IDC_LoginCode                   1005
 #define IDC_SalaryIn                    1006
 #define IDC_ListMng                     1008
@@ -34,6 +34,7 @@
 #define IDC_Pass                        1018
 #define IDC_STATIC4                     1019
 #define IDC_STATIC3                     1020
+
 
 // Next default values for new objects
 // 

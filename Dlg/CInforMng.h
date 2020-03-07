@@ -8,6 +8,7 @@ class CInforMng : public CDialogEx
 	DECLARE_DYNAMIC(CInforMng)
 
 public:
+	bool m_bModifyB;
 	CInforMng(CWnd* pParent = nullptr);   // 标准构造函数
 	virtual ~CInforMng();
 
@@ -21,13 +22,16 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	BOOL m_bModify;
+	//BOOL m_bModify;
 	afx_msg void OnClkInforInpur();
 	afx_msg void OnAdminClk();
 	afx_msg void OnBnClickedGetinfor();
 
 	virtual BOOL OnInitDialog();
-	CListCtrl* pList;
+	//CListCtrl* pList;
+	CListCtrl mInforList;
+
 	afx_msg void OnBnClickeddel();
 	afx_msg void OnBnClickedModify();
+	afx_msg void OnDestroy();
 };

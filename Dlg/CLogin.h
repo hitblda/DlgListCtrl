@@ -26,7 +26,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	virtual void OnOK();
 	bool Createfile(MyAdmData& a);
-	bool LoginJudge(const CString& szNum, const CString& szName, const CString& szCode);
+	bool LoginJudge(int Num, const CString& szName, const CString& szCode);
 	bool CkeckPasswd;
 
 };

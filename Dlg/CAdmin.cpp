@@ -33,7 +33,8 @@ BEGIN_MESSAGE_MAP(CAdmin, CDialogEx)
 	ON_BN_CLICKED(IDC_del, &CAdmin::OnBnClickeddel)
 	ON_BN_CLICKED(IDC_Add, &CAdmin::OnBnClickedAdd)
 	ON_BN_CLICKED(IDC_Modify, &CAdmin::OnBnClickedModify)
-	ON_WM_DESTROY()
+//	ON_WM_DESTROY()
+ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -43,14 +44,14 @@ BOOL CAdmin::Check(LPCTSTR mStr)
 {
 	// TODO: 在此处添加实现代码.
 	//CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
-	int i = 0, nCount = pList->GetItemCount(); //获取该控件里面有多少行文字
-	//CString mTmp = (pList->GetItemText(i, 0));//获取第i行第0列的数据,再和传进来的对比
+	int i = 0, nCount = mAdminList.GetItemCount(); //获取该控件里面有多少行文字
+	//CString mTmp = (mAdminList.GetItemText(i, 0));//获取第i行第0列的数据,再和传进来的对比
 	//bool b=mTmp.CompareNoCase(mStr);//CompareNoCase为不区分大小写的对比,逻辑！匹配为FALSE
 	
 	while (i < nCount)
 	{
 		//if (mStr == mTmp )  		
-		if (!pList->GetItemText(i, 0).CompareNoCase(mStr))  //获取第i行第0列的数据,再和传进来的对比
+		if (!mAdminList.GetItemText(i, 0).CompareNoCase(mStr))  //获取第i行第0列的数据,再和传进来的对比
 			return  true;
 		i++;
 	}
@@ -60,11 +61,31 @@ BOOL CAdmin::Check(LPCTSTR mStr)
 void CAdmin::OnBnClickedAdd()
 {
 	// TODO: 在此添加控件通知处理程序代码
+
+	//////////////////////读出已有值//////////////////////////
+	CFile f;
+	if (!f.Open(L"MyAdmData.dat", CFile::modeRead))
+	{
+		AfxMessageBox(L"UserSettingSave.dat文件不存在!");
+		return;
+	}
+	//MyAdmData a;
+	int i = 0;
+
+	while (f.Read(&theApp.a, sizeof(theApp.a)) == sizeof(theApp.a))
+	{
+	}
+	CString nstr1, nstr2;
+	nstr1.Format(L"%d", theApp.a.sNum+1);///???
+	nstr2.Format(L"%d", theApp.a.Salary);
+	//////////////////////////////////////////////////////////
+
 	CString str,str1,str2,str3;
 	GetDlgItemText(IDC_EDIT1, str);
 	GetDlgItemText(IDC_EDIT2, str1);  //从密码的输入框获取
 	
 	int nIndex = m_cbComBox.GetCurSel();
+	int workerNo = 0;
 	m_cbComBox.GetLBText(nIndex, str2);
 	CTime time;
 	time = CTime::GetCurrentTime();
@@ -77,19 +98,19 @@ void CAdmin::OnBnClickedAdd()
 	}
 	
 	//CListCtrl *pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
-	int nRawCount = pList->GetItemCount(); //获取该控件里面有多少行文字,第0行是编号0
-	int nColumnCount = pList->GetHeaderCtrl()->GetItemCount();
-	pList->InsertItem(
+	int nRawCount = mAdminList.GetItemCount(); //获取该控件里面有多少行文字,第0行是编号0
+	int nColumnCount = mAdminList.GetHeaderCtrl()->GetItemCount();
+	mAdminList.InsertItem(
 				LVIF_TEXT | LVIF_STATE, 0, str,
 				LVIS_SELECTED, LVIS_SELECTED,
 				0, 0);
-	pList->SetItemText(0,1,L"");  //从 
-	pList->SetItemText(0,2,str1);  //从密码的输入框获取
-	pList->SetItemText(0,3, str2);   
-	pList->SetItemText(0,4, L"");
-	pList->SetItemText(0,5, str3);
+	mAdminList.SetItemText(0,1,nstr1);  //从 
+	mAdminList.SetItemText(0,2,str1);  //从密码的输入框获取
+	mAdminList.SetItemText(0,3, str2);   
+	mAdminList.SetItemText(0,4, nstr2);
+	mAdminList.SetItemText(0,5, str3);
 
-	m_bModify = true;
+	m_bModifyA = true;
 }
 
 void CAdmin::OnBnClickeddel()
@@ -97,23 +118,23 @@ void CAdmin::OnBnClickeddel()
 	// TODO: 在此添加控件通知处理程序代码
 	if (AfxMessageBox(L"您确认要删除吗？？", MB_YESNOCANCEL) == IDYES)
 	{
-		POSITION pos = pList->GetFirstSelectedItemPosition();
+		POSITION pos = mAdminList.GetFirstSelectedItemPosition();
 		if (!pos)
 		{
 			AfxMessageBox(L"请选择一个账号");
 			return;
 		}
-		int nItem = pList->GetNextSelectedItem(pos);
-	//	CString str = pList->GetItemText(nItem, 2);
-		if (!pList->GetItemText(nItem, 2).CompareNoCase(L"高级"))
+		int nItem = mAdminList.GetNextSelectedItem(pos);
+	//	CString str = mAdminList.GetItemText(nItem, 2);
+		if (!mAdminList.GetItemText(nItem, 3).CompareNoCase(L"高级"))
 		{
 			AfxMessageBox(L"管理员账号不可删除！");
 			return;
 		}
-		if (AfxMessageBox(L"最后的删除警告,确认删除用户 " + pList->GetItemText(nItem, 0) + L" 吗？", MB_YESNOCANCEL) == IDYES)
+		if (AfxMessageBox(L"最后的删除警告,确认删除用户 " + mAdminList.GetItemText(nItem, 0) + L" 吗？", MB_YESNOCANCEL) == IDYES)
 		{
-			m_bModify = TRUE;
-			pList->DeleteItem(nItem);
+			m_bModifyA = TRUE;
+			mAdminList.DeleteItem(nItem);
 		}
 		return;
 	}
@@ -128,7 +149,7 @@ void CAdmin::OnBnClickedModify()
 	//1，方法1，通过点击CListCtrl里面的用户名，然后将其获取到CEdit控件，该知识欠缺，最后点击修改按钮修改
 	//2，方法2，点击修改按钮将CListCtrl里面的东西获取到弹出一个框里面，然后在这个里面修改，该知识欠缺
 
-	m_bModify = true;
+	m_bModifyA = true;
 #endif
 
 	/*
@@ -157,16 +178,24 @@ void CAdmin::LoadFile()
 
 	while (f.Read(&theApp.a, sizeof(theApp.a)) == sizeof(theApp.a))
 	{
-		//pList->InsertItem(
-		//	LVIF_TEXT | LVIF_STATE, i, a.sName,
-		//	(i % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED,
-		//	0, 0);
-		pList->InsertItem(i, theApp.a.sName);
+	
+		CString str1,str2;
+		//int n = theApp.a.Salary;
+		//str.Format(L"%d",n);
+	
+		str1.Format(L"%d", theApp.a.sNum);
+		str2.Format(L"%d", theApp.a.Salary);
 
-		pList->SetItemText(i, 1, theApp.a.sCode);  //从密码的输入框获取
-		pList->SetItemText(i, 2, theApp.a.nPrior?L"普通":L"高级");  //从密码的输入框获取
-		pList->SetItemText(i, 3, theApp.a.m_tm);
 
+		mAdminList.InsertItem(LVIF_TEXT | LVIF_STATE,i, theApp.a.sName, 0, LVIS_SELECTED,
+			0, 0);//账号
+
+		//mAdminList.SetItemText(i, 1, theApp.a.sName);  
+		mAdminList.SetItemText(i, 1, str1);  //工号
+		mAdminList.SetItemText(i, 2, theApp.a.sCode);  //密码
+		mAdminList.SetItemText(i, 3, theApp.a.nPrior?L"普通":L"高级");  //权限
+		mAdminList.SetItemText(i, 4, str2);  //工资
+		mAdminList.SetItemText(i, 5, theApp.a.m_tm);  //入职时间
 	}
 }
 
@@ -174,6 +203,8 @@ void CAdmin::LoadFile()
 BOOL CAdmin::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+
+	m_bModifyA = false;
 
 	//根据保存到全局区的内容 给出窗口标题
 	CString str = L"管理员信息设置界面 - ";
@@ -207,13 +238,16 @@ m_cbcombox.InsertString(2 ,_T("广州") );
 	pCombo->SetCurSel(0);  //给下拉复选框设置默认选择项
 
 	//CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
-	pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
-	pList->InsertColumn(1, L"账户", LVCFMT_CENTER, 120,0);
-	pList->InsertColumn(1, L"工号", LVCFMT_CENTER, 120,0);
-	pList->InsertColumn(2, L"密码", LVCFMT_CENTER, 160);
-	pList->InsertColumn(3, L"权限", LVCFMT_CENTER, 120);
-	pList->InsertColumn(4, L"入职时间", LVCFMT_CENTER, 200);
-	pList->InsertColumn(4, L"工资", LVCFMT_CENTER, 90);
+	//pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
+	HWND hWnd = ::GetDlgItem(m_hWnd, IDC_ListMng);
+	mAdminList.Attach(hWnd);
+
+	mAdminList.InsertColumn(1, L"账户", LVCFMT_LEFT, 120,0);
+	mAdminList.InsertColumn(1, L"工号", LVCFMT_CENTER, 120,0);
+	mAdminList.InsertColumn(2, L"密码", LVCFMT_CENTER, 160,0);
+	mAdminList.InsertColumn(3, L"权限", LVCFMT_CENTER, 120,0);
+	mAdminList.InsertColumn(4, L"入职时间", LVCFMT_CENTER, 200,0);
+	mAdminList.InsertColumn(4, L"工资", LVCFMT_CENTER, 90,0);
 
 	//////////////////////////////////////////////////////////
 	LoadFile();
@@ -247,27 +281,13 @@ BOOL SetItemText(int nItem,int nSubItem,LPCTSTR lpszText);
 */
 
 
-void CAdmin::OnDestroy()
-{
-
-	if (m_bModify)
-	{
-		int nRet = AfxMessageBox(L"是否将改到保存到文件？", MB_YESNOCANCEL);
-		if ( nRet==IDYES)
-		{
-			SaveData();
-		}
-		else
-			return;
-	}
-
-	CDialogEx::OnDestroy();
-
-	 
-}
+//void CAdmin::OnDestroy()
+//{
+//	CDialogEx::OnDestroy(); 
+//}
 
 
-void CAdmin::SaveData()
+void CAdmin::SaveData()  //
 {
 	// TODO: 在此处添加实现代码.
 	//MyAdmData a;
@@ -277,20 +297,27 @@ void CAdmin::SaveData()
 		AfxMessageBox(L"保存文件失败！！");
 		return;
 	}
-	int i = 0, nCount = pList->GetItemCount();
+	int i = 0, nCount = mAdminList.GetItemCount();
 	while (i < nCount)
 	{
-		pList->GetItemText(i, 0, theApp.a.sName,_countof(theApp.a.sName));
-		pList->GetItemText(i, 1, theApp.a.sCode,_countof(theApp.a.sCode));
-		if (pList->GetItemText(i, 2) == L"普通")
+		CString str1,str2;
+		str1.Format(L"%d", theApp.a.sNum);
+		str2.Format(L"%d", theApp.a.Salary);
+
+		mAdminList.GetItemText(i, 0, theApp.a.sName,_countof(theApp.a.sName));
+		//mAdminList.GetItemText(i, 1, (PTSTR)(LPCTSTR)str1,sizeof(str1)); //这种或者下边的都可以
+		mAdminList.GetItemText(i, 1, str1.GetBuffer(),sizeof(str1));
+		mAdminList.GetItemText(i, 2, theApp.a.sCode,_countof(theApp.a.sCode));
+		if (mAdminList.GetItemText(i, 3) == L"普通")
 		{
 			theApp.a.nPrior = 1;
 		}
-		else if (pList->GetItemText(i, 2) == L"高级")
+		else if (mAdminList.GetItemText(i, 3) == L"高级")
 		{
 			theApp.a.nPrior = 0;
 		}
-		pList->GetItemText(i, 3, theApp.a.m_tm, _countof(theApp.a.m_tm));
+		mAdminList.GetItemText(i, 4, str2.GetBuffer(), sizeof(str2));
+		mAdminList.GetItemText(i, 5, theApp.a.m_tm, _countof(theApp.a.m_tm));
 
 		f.Write(&theApp.a, sizeof(theApp.a));  //结构体
 		// _countof 只对数组有效
@@ -302,3 +329,34 @@ void CAdmin::SaveData()
 	f.Close();
 }
 
+
+
+void CAdmin::OnCancel()
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (m_bModifyA)
+	{
+		int nRet = AfxMessageBox(L"是否将改到保存到文件？", MB_YESNOCANCEL);
+		if (nRet == IDYES)
+		{
+			SaveData();
+		}
+		else
+		{
+			EndDialog(0);
+		}
+	}
+
+	CDialogEx::OnCancel();
+	//return;
+}
+
+
+void CAdmin::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	HWND hWnd = mAdminList.Detach();
+
+	// TODO: 在此处添加消息处理程序代码
+}

@@ -27,7 +27,8 @@ END_MESSAGE_MAP()
 
 CDlgApp::CDlgApp()
 {
-	
+
+	//m_bModify = false;
 	// TODO: 在此处添加构造代码，
 	// 将所有重要的初始化放置在 InitInstance 中
 }
@@ -42,6 +43,9 @@ CDlgApp theApp;
 BOOL CDlgApp::InitInstance()
 {
 	CWinApp::InitInstance();
+	
+	//m_bModify = false;
+	a = { L"admin", 100000, L"123456", 0, L"2020-03-08", 54321 };
 	tryTimes = 0;
 	CLogin lg;
 

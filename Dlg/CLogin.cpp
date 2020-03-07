@@ -48,11 +48,11 @@ bool CLogin::Createfile(MyAdmData& a)
 }
 
 // CLogin 消息处理程序
-bool CLogin::LoginJudge(const CString& szNum, const CString& szName, const CString& szCode)
+bool CLogin::LoginJudge(int szNum, const CString& szName, const CString& szCode)
 {
 	// TODO: 在此处添加实现代码.
 	CFile f;
-	MyAdmData a= { L"admin", L"100000", L"123456", 0, L"2020-03-08", 54321 };;
+	MyAdmData a= { L"admin", 100000, L"123456", 0, L"2020-03-08" , 54321 };
 
 	if (!f.Open(L"MyAdmData.dat", CFile::modeRead))
 	{
@@ -66,7 +66,7 @@ bool CLogin::LoginJudge(const CString& szNum, const CString& szName, const CStri
 			a.nPrior = 0;
 
 			theApp.a = a;
-			return true;;
+			return true;
 		}
 		else
 		{
@@ -76,7 +76,24 @@ bool CLogin::LoginJudge(const CString& szNum, const CString& szName, const CStri
 	}
 	else  //文件存在才能够以普通用户账号登录
 	{
-		if (!szNum.CompareNoCase(L"123456"))
+		if (!szName.CompareNoCase(L"admin"))  //文件存在，是admin
+		{
+			StrCpy(a.sName, L"admin");
+			a.nPrior = 0;
+
+			theApp.a = a;
+			return true;
+
+		}
+		/*else if (!szNum.CompareNoCase(L"123456"))
+		{
+			StrCpy(a.sName, L"normal");
+			a.nPrior = 1;
+
+			theApp.a = a;
+			return true;
+		}*/
+		else if (szNum == 123456)
 		{
 			StrCpy(a.sName, L"normal");
 			a.nPrior = 1;
@@ -117,11 +134,22 @@ void CLogin::OnBnClickedOk()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	CString szNum, szName, szPass;
+	int num = 0;
 	GetDlgItemText(IDC_NUM, szNum);
 	GetDlgItemText(IDC_NAME, szName);
 	GetDlgItemText(IDC_Pass, szPass);
+	if (szNum == L"")
+	{
+		num = 0;
+	}
+	else
+	{
+		num = _ttoi(szNum);
+	}
+	//szNum.Format(L"%d", num);
 
-	if (FALSE == LoginJudge(szNum,szName, szPass))
+
+	if (FALSE == LoginJudge(num,szName, szPass))
 	{
 		CkeckPasswd = false;
 		EndDialog(IDC_Login);

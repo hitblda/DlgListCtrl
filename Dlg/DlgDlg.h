@@ -8,6 +8,7 @@
 // CDlgDlg 对话框
 class CDlgDlg : public CDialogEx
 {
+
 // 构造
 public:
 	CDlgDlg(CWnd* pParent = nullptr);	// 标准构造函数
