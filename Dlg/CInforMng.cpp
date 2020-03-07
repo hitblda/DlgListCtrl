@@ -4,7 +4,7 @@
 #include "pch.h"
 #include "Dlg.h"
 #include "CInforMng.h"
-#include "CAdmin.h"
+
 #include "afxdialogex.h"
 
 #include "CDataInput.h"
@@ -131,7 +131,8 @@ BOOL CInforMng::OnInitDialog()
 	
 //	mInforList.SubclassWindow(hWnd); // 关联窗口控件
 
-	mInforList.SubclassDlgItem(IDC_ListInfor, this);
+	//mInforList.SubclassDlgItem(IDC_ListInfor, this);
+	m_admin.mAdminList.SubclassDlgItem(IDC_ListInfor, this);
 	//根据保存到全局区的内容 给出窗口标题
 	CString str = L"信息管理面板 - ";
 	str += theApp.a.sName;
@@ -143,16 +144,24 @@ BOOL CInforMng::OnInitDialog()
 
 	// TODO:  在此添加额外的初始化
 	//pList = (CListCtrl*)GetDlgItem(IDC_ListInfor);
-	mInforList.InsertColumn(1, L"姓名", LVCFMT_LEFT, 160);
-	mInforList.InsertColumn(2, L"工号", LVCFMT_LEFT, 120);
-	mInforList.InsertColumn(3, L"登录密码", LVCFMT_LEFT, 160);
-	mInforList.InsertColumn(4, L"权限", LVCFMT_LEFT, 160);
-	mInforList.InsertColumn(5, L"入职日期", LVCFMT_LEFT, 200);
-	mInforList.InsertColumn(6, L"工资", LVCFMT_LEFT, 120);
+		//mInforList.InsertColumn(1, L"姓名", LVCFMT_LEFT, 160);
+	//mInforList.InsertColumn(2, L"工号", LVCFMT_LEFT, 120);
+	//mInforList.InsertColumn(3, L"入职日期", LVCFMT_LEFT, 200);
+	//mInforList.InsertColumn(4, L"登录密码", LVCFMT_LEFT, 160);
+	//mInforList.InsertColumn(5, L"权限", LVCFMT_LEFT, 160);
+	//mInforList.InsertColumn(6, L"工资", LVCFMT_LEFT, 120);
+
+	m_admin.mAdminList.InsertColumn(1, L"姓名", LVCFMT_LEFT, 160);
+	m_admin.mAdminList.InsertColumn(2, L"工号", LVCFMT_LEFT, 120);
+	m_admin.mAdminList.InsertColumn(3, L"入职日期", LVCFMT_LEFT, 200);
+	m_admin.mAdminList.InsertColumn(4, L"登录密码", LVCFMT_LEFT, 160);
+	m_admin.mAdminList.InsertColumn(5, L"权限", LVCFMT_LEFT, 160);
+	m_admin.mAdminList.InsertColumn(6, L"工资", LVCFMT_LEFT, 120);
 
 
 	//////////////////////////////////////////////////////////
 //LoadFile();
+	m_admin.LoadFile(1);
 
 /////////////////////////////////////////////////////////////////
 

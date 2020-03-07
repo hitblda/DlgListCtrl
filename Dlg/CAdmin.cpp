@@ -3,7 +3,7 @@
 
 #include "pch.h"
 #include "Dlg.h"
-#include "CAdmin.h"
+#include "CInforMng.h"
 #include "afxdialogex.h"
 #include "CDataInput.h"
 

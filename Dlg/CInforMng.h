@@ -1,6 +1,7 @@
 ﻿#pragma once
+#include "CAdmin.h"
 
-
+class CAdmin;
 // CInforMng 对话框
 
 class CInforMng : public CDialogEx
@@ -30,7 +31,7 @@ public:
 	virtual BOOL OnInitDialog();
 	//CListCtrl* pList;
 	CListCtrl mInforList;
-	
+	CAdmin m_admin;
 
 	afx_msg void OnBnClickeddel();
 	afx_msg void OnBnClickedModify();
