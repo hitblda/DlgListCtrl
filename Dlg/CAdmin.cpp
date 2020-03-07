@@ -33,8 +33,7 @@ BEGIN_MESSAGE_MAP(CAdmin, CDialogEx)
 	ON_BN_CLICKED(IDC_del, &CAdmin::OnBnClickeddel)
 	ON_BN_CLICKED(IDC_Add, &CAdmin::OnBnClickedAdd)
 	ON_BN_CLICKED(IDC_Modify, &CAdmin::OnBnClickedModify)
-//	ON_WM_DESTROY()
-ON_WM_DESTROY()
+
 END_MESSAGE_MAP()
 
 
@@ -164,7 +163,7 @@ void CAdmin::OnBnClickedModify()
 }
 
 
-void CAdmin::LoadFile()
+void CAdmin::LoadFile(bool prior)
 {
 	// TODO: 在此处添加实现代码.
 	CFile f;
@@ -192,10 +191,13 @@ void CAdmin::LoadFile()
 
 		//mAdminList.SetItemText(i, 1, theApp.a.sName);  
 		mAdminList.SetItemText(i, 1, str1);  //工号
-		mAdminList.SetItemText(i, 2, theApp.a.sCode);  //密码
-		mAdminList.SetItemText(i, 3, theApp.a.nPrior?L"普通":L"高级");  //权限
-		mAdminList.SetItemText(i, 4, str2);  //工资
-		mAdminList.SetItemText(i, 5, theApp.a.m_tm);  //入职时间
+		mAdminList.SetItemText(i, 2, theApp.a.m_tm);  //入职时间
+		if (prior)
+		{
+			mAdminList.SetItemText(i, 3, theApp.a.sCode);  //密码
+			mAdminList.SetItemText(i, 4, theApp.a.nPrior ? L"普通" : L"高级");  //权限
+			mAdminList.SetItemText(i, 5, str2);  //工资
+		}
 	}
 }
 
@@ -214,7 +216,6 @@ BOOL CAdmin::OnInitDialog()
 	str += L" )";
 	SetWindowText(str);
 
-	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBO1);
 	 //如果在控件里面没有给定选项，那么这里通过该方式给
 	/*
 有两种方式，第一种我把它成为盲插，为什么呢？因为它不指定行进行插入，利用函数AddString,
@@ -230,40 +231,66 @@ m_cbcombox.InsertString(2 ,_T("广州") );
 版权声明：本文为CSDN博主「裂风龙隼」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/leiyang2014/article/details/53980555
 	*/
+	//HWND hWnd = ::GetDlgItem(m_hWnd, IDC_COMBO1);
+	//m_cbComBox.Attach(hWnd);
+	//m_cbComBox.InsertString(1, L"高级");
+	//m_cbComBox.InsertString(0, L"普通");
+	//m_cbComBox.SetCurSel(0);
+
+	//m_cbComBox.SubclassDlgItem(IDC_COMBO1, this);
+	//m_cbComBox.InsertString(0, L"普通");
+	//m_cbComBox.InsertString(1, L"高级");
+
+	//HWND hWnd = ::GetDlgItem(m_hWnd, IDC_COMBO1);
+	//m_cbComBox.SubclassWindow(hWnd);
+
+	////m_cbComBox.AddString(L"普通");
+	////m_cbComBox.AddString(L"高级");
+	//	m_cbComBox.InsertString(0, L"普通");
+	//m_cbComBox.InsertString(1, L"高级");
+/////////////////////////////////////////////////////////////////////////////
+	//attach 、 SubclassDlgItem 和 SubclassWindow 不能用于CComboBox
+
+	CComboBox* pCombo = (CComboBox*)GetDlgItem(IDC_COMBO1);
 	pCombo->InsertString(0, _T("普通"));
 	pCombo->InsertString(1, _T("高级"));
-//	pCombo->InsertString(3, _T("超级"));
-
-	//在ComBox属性选项的Data里面输入 普通;管理员  
+	//在ComBox属性选项的Data里面输入 普通;管理员
 	pCombo->SetCurSel(0);  //给下拉复选框设置默认选择项
+
 
 	//CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
 	//pList = (CListCtrl*)GetDlgItem(IDC_ListMng);
-	HWND hWnd = ::GetDlgItem(m_hWnd, IDC_ListMng);
-	mAdminList.Attach(hWnd);
+
+	//HWND hWnd = ::GetDlgItem(m_hWnd, IDC_ListMng);
+	//mAdminList.Attach(hWnd);
+	mAdminList.SubclassDlgItem(IDC_ListMng, this);
+
+	//mAdminList.SubclassWindow(::GetDlgItem(hWnd,IDC_ListMng));
 
 	mAdminList.InsertColumn(1, L"账户", LVCFMT_LEFT, 120,0);
-	mAdminList.InsertColumn(1, L"工号", LVCFMT_CENTER, 120,0);
-	mAdminList.InsertColumn(2, L"密码", LVCFMT_CENTER, 160,0);
-	mAdminList.InsertColumn(3, L"权限", LVCFMT_CENTER, 120,0);
-	mAdminList.InsertColumn(4, L"入职时间", LVCFMT_CENTER, 200,0);
-	mAdminList.InsertColumn(4, L"工资", LVCFMT_CENTER, 90,0);
+	mAdminList.InsertColumn(2, L"工号", LVCFMT_CENTER, 120,0);
+	mAdminList.InsertColumn(3, L"入职时间", LVCFMT_CENTER, 200,0);
+	if (!theApp.a.nPrior) //为普通用户
+	{
+		mAdminList.InsertColumn(4, L"密码", LVCFMT_CENTER, 160, 0);
+		mAdminList.InsertColumn(5, L"权限", LVCFMT_CENTER, 120, 0);
+		mAdminList.InsertColumn(6, L"工资", LVCFMT_CENTER, 90, 0);
+	}
 
-	//////////////////////////////////////////////////////////
-	LoadFile();
-	   
 	// TODO:  在此添加额外的初始化
 
 	/////////////////////////////////////////////////////////////////
 	if (theApp.a.nPrior) //为普通用户
 	{
 		GetDlgItem(IDC_Add)->DestroyWindow(); //使该按钮不能使用
-		GetDlgItem(IDC_del)->DestroyWindow(); //使该按钮不能使用
+		GetDlgItem(IDC_del)->EnableWindow(false); //使该按钮不能使用
 		GetDlgItem(IDC_COMBO1)->DestroyWindow(); //使该按钮不能使用	
 		GetDlgItem(IDC_STATIC3)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_STATIC4)->ShowWindow(SW_HIDE); //使该静态文本不能使用	
-
 	}
+	//////////////////////////////////////////////////////////
+	LoadFile(!theApp.a.nPrior);
+
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -351,12 +378,3 @@ void CAdmin::OnCancel()
 	//return;
 }
 
-
-void CAdmin::OnDestroy()
-{
-	CDialogEx::OnDestroy();
-
-	HWND hWnd = mAdminList.Detach();
-
-	// TODO: 在此处添加消息处理程序代码
-}

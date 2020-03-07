@@ -29,13 +29,12 @@ public:
 	afx_msg void OnBnClickedModify();
 	virtual BOOL OnInitDialog();
 	afx_msg BOOL Check(LPCTSTR mStr);
-//	afx_msg void OnDestroy();
+
 	//CListCtrl* pList;
 	CListCtrl  mAdminList;
 
 	CComboBox m_cbComBox;
 	void SaveData();
-	void LoadFile();
+	void LoadFile(bool prior);
 	virtual void OnCancel();
-	afx_msg void OnDestroy();
 };

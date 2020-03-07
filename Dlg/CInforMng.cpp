@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(CInforMng, CDialogEx)
 	ON_BN_CLICKED(IDC_GetInfor, &CInforMng::OnBnClickedGetinfor)
 	ON_BN_CLICKED(IDC_del, &CInforMng::OnBnClickeddel)
 	ON_BN_CLICKED(IDC_Modify, &CInforMng::OnBnClickedModify)
-	ON_WM_DESTROY()
+//	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 
@@ -126,9 +126,12 @@ BOOL CInforMng::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 	m_bModifyB = false;
-	HWND hWnd = ::GetDlgItem(m_hWnd, IDC_ListInfor);
-	mInforList.Attach(hWnd);
+	//HWND hWnd = ::GetDlgItem(m_hWnd, IDC_ListInfor);
+//	mInforList.Attach(hWnd);
+	
+//	mInforList.SubclassWindow(hWnd); // 关联窗口控件
 
+	mInforList.SubclassDlgItem(IDC_ListInfor, this);
 	//根据保存到全局区的内容 给出窗口标题
 	CString str = L"信息管理面板 - ";
 	str += theApp.a.sName;
@@ -143,7 +146,7 @@ BOOL CInforMng::OnInitDialog()
 	mInforList.InsertColumn(1, L"姓名", LVCFMT_LEFT, 160);
 	mInforList.InsertColumn(2, L"工号", LVCFMT_LEFT, 120);
 	mInforList.InsertColumn(3, L"登录密码", LVCFMT_LEFT, 160);
-	mInforList.InsertColumn(4, L"等级", LVCFMT_LEFT, 160);
+	mInforList.InsertColumn(4, L"权限", LVCFMT_LEFT, 160);
 	mInforList.InsertColumn(5, L"入职日期", LVCFMT_LEFT, 200);
 	mInforList.InsertColumn(6, L"工资", LVCFMT_LEFT, 120);
 
@@ -152,14 +155,6 @@ BOOL CInforMng::OnInitDialog()
 //LoadFile();
 
 /////////////////////////////////////////////////////////////////
-	if (theApp.a.nPrior) //为普通用户
-	{
-		GetDlgItem(IDC_GetInfor)->DestroyWindow(); //使该按钮不能使用
-		GetDlgItem(IDC_Modify)->DestroyWindow(); //使该按钮不能使用
-		GetDlgItem(IDC_del)->DestroyWindow(); //使该按钮不能使用
-		GetDlgItem(IDC_Input)->DestroyWindow(); //使该按钮不能使用
-		GetDlgItem(IDC_ADMIN)->DestroyWindow(); //使该按钮不能使用
-	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
@@ -209,12 +204,21 @@ void CInforMng::OnBnClickedModify()
 }
 
 
-void CInforMng::OnDestroy()
-{
-	CDialogEx::OnDestroy();
+//void CInforMng::OnDestroy()
+//{
+//	CDialogEx::OnDestroy();
+//
+//	HWND hWnd = mInforList.Detach();
+//
+//
+//	// TODO: 在此处添加消息处理程序代码
+//}
 
-	HWND hWnd = mInforList.Detach();
 
-
-	// TODO: 在此处添加消息处理程序代码
-}
+//BOOL CInforMng::DestroyWindow()
+//{
+//	// TODO: 在此添加专用代码和/或调用基类
+//	mInforList.UnsubclassWindow();
+//
+//	return CDialogEx::DestroyWindow();
+//}

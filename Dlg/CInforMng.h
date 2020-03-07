@@ -30,8 +30,8 @@ public:
 	virtual BOOL OnInitDialog();
 	//CListCtrl* pList;
 	CListCtrl mInforList;
+	
 
 	afx_msg void OnBnClickeddel();
 	afx_msg void OnBnClickedModify();
-	afx_msg void OnDestroy();
 };
